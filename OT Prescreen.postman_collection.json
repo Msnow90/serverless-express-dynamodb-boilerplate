@@ -1,0 +1,259 @@
+{
+	"info": {
+		"_postman_id": "45248ada-960f-4568-8eac-ee76c98f85d7",
+		"name": "OT Prescreen",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Create User",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Can successfully create a user', () => {\r",
+							"    pm.response.to.have.status(200);\r",
+							"    const resData = pm.response.json();\r",
+							"    \r",
+							"    pm.expect(resData.email).to.equal(pm.environment.get('EMAIL'))\r",
+							"\r",
+							"    pm.environment.set(\"USERID\", resData.userId)\r",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.environment.set(\"FNAME\", \"Matthew\")\r",
+							"pm.environment.set(\"LNAME\", \"Snow\")\r",
+							"pm.environment.set(\"EMAIL\", \"someemail@email.com\")\r",
+							"pm.environment.set(\"PHONE\", \"(555)555-5555\")\r",
+							"pm.environment.set(\"GENDER\", \"MALE\")\r",
+							"pm.environment.set(\"MI\", \"M\")\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"firstName\": \"{{FNAME}}\",\r\n    \"lastName\": \"{{LNAME}}\",\r\n    \"phone\": \"{{PHONE}}\",\r\n    \"email\": \"{{EMAIL}}\",\r\n    \"middleInitial\": \"{{MI}}\",\r\n    \"gender\": \"{{GENDER}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/api/user",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"user"
+					]
+				},
+				"description": "# Create a new user:\n\n### Returns:\n  JSON object of user."
+			},
+			"response": []
+		},
+		{
+			"name": "Generate Random User",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/api/user/generate-random",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"user",
+						"generate-random"
+					]
+				},
+				"description": "# Generates a random user:\n### Properties of generated user:\n  - firstName\n  - lastName\n  - gender\n  - middleInitial\n  - email\n  - phone\n  - userId\n### Returns:\n  JSON object of user."
+			},
+			"response": []
+		},
+		{
+			"name": "Get User By Id",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Finding a user by created id should fetch our created user', () => {\r",
+							"    pm.response.to.have.status(200);\r",
+							"    const responseJson = pm.response.json();\r",
+							"    pm.expect(responseJson.firstName).to.equal('Matthew')\r",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/api/user/:userId",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"user",
+						":userId"
+					],
+					"variable": [
+						{
+							"key": "userId",
+							"value": "{{USERID}}"
+						}
+					]
+				},
+				"description": "# Get user by provided userId:\n### Returns:\n  JSON object of user."
+			},
+			"response": []
+		},
+		{
+			"name": "Get All Users",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Users DB should have 2 users', () => {\r",
+							"    pm.response.to.have.status(200);\r",
+							"    const responseJson = pm.response.json();\r",
+							"    pm.expect(responseJson.length).to.be.greaterThan(0);\r",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/api/user",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"user"
+					]
+				},
+				"description": "# Gets All Users of Table:\n### Returns:\n  Array list of users."
+			},
+			"response": []
+		},
+		{
+			"name": "Update User",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Can successfully update a field on specified row', () => {\r",
+							"    pm.response.to.have.status(200);\r",
+							"    const resData = pm.response.json();\r",
+							"    \r",
+							"    pm.expect(resData.Attributes.lastName).to.equal('Webber')\r",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"lastName\": \"Webber\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/api/user/:userId",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"user",
+						":userId"
+					],
+					"variable": [
+						{
+							"key": "userId",
+							"value": "{{USERID}}"
+						}
+					]
+				},
+				"description": "# Update user by provided userId (params) and req.body payload:\n### Returns:\n  - Attributes - JSON list of updated fields and new values."
+			},
+			"response": []
+		},
+		{
+			"name": "Delete User By Id",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Can successfully delete a user by id', () => {\r",
+							"    pm.response.to.have.status(200);\r",
+							"    const resData = pm.response.json();\r",
+							"    \r",
+							"    pm.expect(resData.deletedUserId).to.equal(pm.environment.get('USERID'));\r",
+							"    pm.expect(resData.success).to.equal(true);\r",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/api/user/:userId",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"user",
+						":userId"
+					],
+					"variable": [
+						{
+							"key": "userId",
+							"value": "{{USERID}}"
+						}
+					]
+				},
+				"description": "# Delete user by provided userId:\n### Returns:\n  - deletedUserId -userId of deleted user\n  - success - boolean"
+			},
+			"response": []
+		}
+	]
+}

@@ -10,7 +10,7 @@ const app = express();
 app.use(expressSanitizer());
 
 // service routes
-const userServiceRoutes = require('./api/usersService/users');
+const userServiceRoutes = require('./api/userService/users');
 
 app.use(bodyParser.json({ limit: '50mb' }));
 app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
@@ -19,7 +19,7 @@ app.get('/', (req, res) => {
     res.status(200).json({ success: true, message: 'You did it!' })
 })
 
-app.use('/api', userServiceRoutes);
+app.use('/api/user', userServiceRoutes);
 
 app.get('*', (req, res, next) => {
     res.status(404).json({ message: 'Failed to fetch resource.' });
